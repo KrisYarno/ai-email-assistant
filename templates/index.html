@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Email Response Assistant</title>
+    <!-- Link to our CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Additional styles for the user menu */
+        .user-menu {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        
+        .user-info {
+            margin-right: 15px;
+            color: #7f8c8d;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="user-menu">
+                <span class="user-info">Logged in as: {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+            <h1>AI Email Response Assistant</h1>
+            <p>AR Customer Service Tool</p>
+            <!-- Navigation tabs -->
+            <nav class="tabs">
+                <button class="tab-btn active" data-tab="response-tab">Generate Response</button>
+                <button class="tab-btn" data-tab="templates-tab">Manage Templates</button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Response Generation Tab -->
+            <div id="response-tab" class="tab-content active">
+                <!-- Template selector -->
+                <section class="template-selector-section">
+                    <h2>Select Template (Optional)</h2>
+                    <div class="template-search">
+                        <input type="text" id="templateSearchInput" placeholder="Search templates...">
+                        <select id="tagFilter">
+                            <option value="">All Tags</option>
+                            <!-- Tags will be populated dynamically -->
+                        </select>
+                        <button id="searchTemplatesBtn">Search</button>
+                    </div>
+                    <div class="templates-container">
+                        <select id="templateSelector" size="5">
+                            <option value="">No template (generate from scratch)</option>
+                            <!-- Templates will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="template-preview">
+                        <h3>Template Preview</h3>
+                        <div id="templatePreview" class="preview-content">
+                            <!-- Template preview will appear here -->
+                            <p class="no-preview">Select a template to see preview</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section for inputting customer email -->
+                <section class="email-input-section">
+                    <h2>Customer Email</h2>
+                    <textarea id="customerEmail" placeholder="Paste the customer's email here..."></textarea>
+                    <button id="generateBtn">Generate Response</button>
+                </section>
+
+                <!-- Section for displaying AI response -->
+                <section class="response-section">
+                    <h2>Generated Response</h2>
+                    <textarea id="aiResponse" placeholder="AI response will appear here..." readonly></textarea>
+                    
+                    <!-- Section for modifying the response -->
+                    <div class="modification-section">
+                        <input type="text" id="modificationRequest" placeholder="Modification request (e.g., 'Make it shorter', 'Add shipping details')">
+                        <button id="modifyBtn">Modify Response</button>
+                    </div>
+                </section>
+
+                <!-- Status display area -->
+                <p id="status" class="status"></p>
+            </div>
+
+            <!-- Template Management Tab -->
+            <div id="templates-tab" class="tab-content">
+                <section class="template-form-section">
+                    <h2>Create/Edit Template</h2>
+                    <input type="hidden" id="templateId" value="">
+                    <div class="form-group">
+                        <label for="templateTitle">Title:</label>
+                        <input type="text" id="templateTitle" placeholder="Enter template title">
+                    </div>
+                    <div class="form-group">
+                        <label for="templateContent">Content:</label>
+                        <textarea id="templateContent" placeholder="Enter template content..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="templateTags">Tags (comma separated):</label>
+                        <input type="text" id="templateTags" placeholder="e.g., shipping, returns, products">
+                    </div>
+                    <div class="template-actions">
+                        <button id="saveTemplateBtn">Save Template</button>
+                        <button id="clearTemplateBtn">Clear Form</button>
+                    </div>
+                </section>
+
+                <section class="templates-list-section">
+                    <h2>Existing Templates</h2>
+                    <div class="template-list-search">
+                        <input type="text" id="templateListSearch" placeholder="Search templates...">
+                        <select id="templateListTagFilter">
+                            <option value="">All Tags</option>
+                            <!-- Tags will be populated dynamically -->
+                        </select>
+                        <button id="searchTemplateListBtn">Search</button>
+                    </div>
+                    <div class="templates-list">
+                        <table id="templatesTable">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Tags</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Templates will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Template management status display area -->
+                <p id="templateStatus" class="status"></p>
+            </div>
+        </main>
+
+        <footer>
+            <p>Internal Use Only - AR Company</p>
+        </footer>
+    </div>
+
+    <!-- Link to our JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
