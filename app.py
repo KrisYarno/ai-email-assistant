@@ -157,6 +157,9 @@ def generate_response():
             api_key=openai_api_key,
             messages=messages,
             model="gpt-4o-mini",
+            #model="o4-mini",
+            #model="gpt-4.1-mini",
+            #model="gpt-4o-mini",
             temperature=0.7,
             max_tokens=500
         )
