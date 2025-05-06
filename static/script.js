@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========== ELEMENT REFERENCES ==========
     
     // Email generation elements
+    const customerNotesInput = document.getElementById('customerNotes');
     const customerEmailInput = document.getElementById('customerEmail');
     const aiResponseOutput = document.getElementById('aiResponse');
     const modificationRequestInput = document.getElementById('modificationRequest');
@@ -21,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const tagFilter = document.getElementById('tagFilter');
     const searchTemplatesBtn = document.getElementById('searchTemplatesBtn');
     const templatePreview = document.getElementById('templatePreview');
+    
+    // Model selection elements
+    const modelOptions = document.querySelectorAll('input[name="model-selection"]');
+    const tokenLimitSelect = document.getElementById('token-limit');
     
     // Template management elements
     const templateIdInput = document.getElementById('templateId');
@@ -68,10 +73,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // ========== MODEL SELECTION FUNCTIONS ==========
+    
+    // Set recommended model as default (GPT-4.1)
+    if (document.getElementById('model-gpt-4.1')) {
+        document.getElementById('model-gpt-4.1').checked = true;
+    }
+    
+    // Add event listeners to all model selection options
+    if (modelOptions) {
+        modelOptions.forEach(option => {
+            option.addEventListener('change', handleModelChange);
+            
+            // Also make the entire option div clickable
+            const optionDiv = option.closest('.model-option');
+            if (optionDiv) {
+                optionDiv.addEventListener('click', function() {
+                    option.checked = true;
+                    handleModelChange({ target: option });
+                });
+            }
+        });
+    }
+    
+    // Initial call to set up the UI based on default selection if model selection exists
+    if (modelOptions && modelOptions.length > 0) {
+        handleModelChange({ target: document.querySelector('input[name="model-selection"]:checked') });
+    }
+    
+    // Function to handle model change
+    function handleModelChange(event) {
+        const selectedModel = event.target.value;
+        console.log(`Model changed to: ${selectedModel}`);
+        
+        // If technical hybrid mode is selected, automatically set token limit to high
+        if (selectedModel === 'technical' && tokenLimitSelect) {
+            tokenLimitSelect.value = '2000';
+            tokenLimitSelect.disabled = true;
+        } else if (tokenLimitSelect) {
+            tokenLimitSelect.disabled = false;
+        }
+        
+        // Update the UI to highlight the selected option
+        modelOptions.forEach(option => {
+            const optionDiv = option.closest('.model-option');
+            if (optionDiv) {
+                if (option.checked) {
+                    optionDiv.classList.add('selected');
+                } else {
+                    optionDiv.classList.remove('selected');
+                }
+            }
+        });
+    }
+    
     // ========== EMAIL GENERATION FUNCTIONS ==========
     
     // Function to handle the initial generation of an AI response
     function handleGenerateResponse() {
+        // get notes
+        const customerNotes = customerNotesInput.value.trim();
+
         // Get the customer email text
         const customerEmail = customerEmailInput.value.trim();
         
@@ -88,10 +150,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get selected template id (if any)
         const selectedTemplateId = templateSelector.value !== '' ? templateSelector.value : null;
         
+        // Get the selected model and token limit if available
+        let selectedModel = 'gpt-4.1'; // Default model
+        let tokenLimit = 1000; // Default token limit
+        
+        // Check if model selection is available
+        const selectedModelElement = document.querySelector('input[name="model-selection"]:checked');
+        if (selectedModelElement) {
+            selectedModel = selectedModelElement.value;
+        }
+        
+        // Check if token limit selection is available
+        if (tokenLimitSelect) {
+            tokenLimit = parseInt(tokenLimitSelect.value);
+        }
+        
         // Create the data object to send to the server
         const data = {
+            customer_notes: customerNotes,
             customer_email: customerEmail,
-            template_id: selectedTemplateId
+            template_id: selectedTemplateId,
+            model: selectedModel,
+            token_limit: tokenLimit
         };
         
         // Send the API request
@@ -131,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to handle modification of an existing AI response
     function handleModifyResponse() {
         // Get the values from all relevant fields
+        const customerNotes = customerNotesInput.value.trim();
         const customerEmail = customerEmailInput.value.trim();
         const previousResponse = aiResponseOutput.value.trim();
         const modificationRequest = modificationRequestInput.value.trim();
@@ -155,11 +236,29 @@ document.addEventListener('DOMContentLoaded', function() {
         setStatus('Modifying response...', 'status-loading');
         setButtonsEnabled(false);
         
+        // Get the selected model and token limit if available
+        let selectedModel = 'gpt-4.1'; // Default model
+        let tokenLimit = 1000; // Default token limit
+        
+        // Check if model selection is available
+        const selectedModelElement = document.querySelector('input[name="model-selection"]:checked');
+        if (selectedModelElement) {
+            selectedModel = selectedModelElement.value;
+        }
+        
+        // Check if token limit selection is available
+        if (tokenLimitSelect) {
+            tokenLimit = parseInt(tokenLimitSelect.value);
+        }
+        
         // Create the data object to send to the server
         const data = {
+            customer_notes: customerNotes,
             customer_email: customerEmail,
             previous_response: previousResponse,
-            modification_request: modificationRequest
+            modification_request: modificationRequest,
+            model: selectedModel,
+            token_limit: tokenLimit
         };
         
         // Send the API request
@@ -596,6 +695,13 @@ document.addEventListener('DOMContentLoaded', function() {
     templateSelector.addEventListener('change', previewTemplate);
     searchTemplatesBtn.addEventListener('click', loadTemplatesForSelector);
     
+    // Token limit change event
+    if (tokenLimitSelect) {
+        tokenLimitSelect.addEventListener('change', function() {
+            console.log(`Token limit changed to: ${tokenLimitSelect.value}`);
+        });
+    }
+    
     // Template management buttons
     saveTemplateBtn.addEventListener('click', saveTemplate);
     clearTemplateBtn.addEventListener('click', clearTemplateForm);
@@ -635,4 +741,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial loading of templates and tags for the first tab
     loadAllTags(tagFilter);
     loadTemplatesForSelector();
+
+    // Add this style if it doesn't exist in your CSS
+    // This adds styling for the selected model option
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+    .model-option.selected {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        background-color: #ebf5fd;
+    }
+    `;
+    document.head.appendChild(styleEl);
 });

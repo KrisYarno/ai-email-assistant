@@ -79,10 +79,72 @@
                     </div>
                 </section>
 
+                <!-- Add this section above the customer email input section -->
+                <section class="model-selection-section">
+                    <h2>AI Model Selection</h2>
+                    <div class="model-info">
+                        <p>Select the AI model that best fits your needs. Different models have different strengths and costs.</p>
+                    </div>
+                    <div class="model-selector">
+                        <div class="model-option">
+                            <input type="radio" id="model-gpt-4o-mini" name="model-selection" value="gpt-4o-mini" checked>
+                            <label for="model-gpt-4o-mini">GPT-4o Mini</label>
+                            <span class="model-description">Balanced performance and cost. Good for general customer service.</span>
+                        </div>
+                        
+                        <div class="model-option">
+                            <input type="radio" id="model-gpt-4o" name="model-selection" value="gpt-4o">
+                            <label for="model-gpt-4o">GPT-4o</label>
+                            <span class="model-description">Higher quality responses but more expensive. Better for complex inquiries.</span>
+                        </div>
+                        
+                        <div class="model-option">
+                            <input type="radio" id="model-gpt-4.1-mini" name="model-selection" value="gpt-4.1-mini">
+                            <label for="model-gpt-4.1-mini">GPT-4.1 Mini</label>
+                            <span class="model-description">Newer model with improved reasoning. Balance of cost and performance.</span>
+                        </div>
+                        
+                        <div class="model-option recommended">
+                            <input type="radio" id="model-gpt-4.1" name="model-selection" value="gpt-4.1">
+                            <label for="model-gpt-4.1">GPT-4.1 <span class="recommended-tag">RECOMMENDED</span></label>
+                            <span class="model-description">Best overall results for customer service. Most natural language.</span>
+                        </div>
+                        
+                        <div class="model-option">
+                            <input type="radio" id="model-o4-mini" name="model-selection" value="o4-mini">
+                            <label for="model-o4-mini">O4 Mini</label>
+                            <span class="model-description">Most technical, less customer-friendly language. Higher cost.</span>
+                        </div>
+                        
+                        <div class="model-option technical">
+                            <input type="radio" id="model-technical" name="model-selection" value="technical">
+                            <label for="model-technical">Technical Hybrid <span class="expensive-tag">2X COST</span></label>
+                            <span class="model-description">Uses O4-Mini for technical precision, then GPT-4.1 for customer-friendly rewording. Best for highly technical inquiries.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="token-limit-container">
+                        <label for="token-limit">Response Length:</label>
+                        <select id="token-limit">
+                            <option value="500">Short (500 tokens)</option>
+                            <option value="1000" selected>Medium (1000 tokens)</option>
+                            <option value="1500">Long (1500 tokens)</option>
+                            <option value="2000">Very Long (2000 tokens)</option>
+                        </select>
+                        <span class="token-info">Longer responses may cost more. Technical Hybrid mode automatically uses higher limits.</span>
+                    </div>
+                </section>
+
                 <!-- Section for inputting customer email -->
                 <section class="email-input-section">
                     <h2>Customer Email</h2>
                     <textarea id="customerEmail" placeholder="Paste the customer's email here..."></textarea>
+                    <!-- Add this section right after the customer email textarea but before the generate button -->
+                    <div class="notes-section">
+                        <h3>Important Notes <span class="optional-label">(Optional)</span></h3>
+                        <p class="notes-description">Add any important information that should be included in the response (e.g., "Item is out of stock", "Package will be delivered today", etc.)</p>
+                        <textarea id="customerNotes" placeholder="Enter any important information or context for the response..."></textarea>
+                    </div>
                     <button id="generateBtn">Generate Response</button>
                 </section>
 
